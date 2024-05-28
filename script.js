@@ -18,6 +18,8 @@ let intervalId;
 musics.loop = true;
 let timeCurrentSeconds = 0;
 let timeCurrentMinutes = 25;
+let contagemPomodoro  = 0;
+
 
 
 const initcountTimer = () => {
@@ -97,12 +99,12 @@ function updateStates(button, contexto) {
             btn.classList.remove("active");
         }
     })
-
     checkState(contexto);
 }
 
 
 function checkState(contexto) {
+    
     switch (contexto) {
         case "foco":
             appTitle.innerHTML = `
@@ -135,6 +137,22 @@ function timeDefined(minutes) {
     timeCurrentSeconds = 0
     timeClass.innerHTML = `${+timeCurrentMinutes}:${timeCurrentSeconds}0`
     clearInterval(intervalId);
-    updateStateButtons();
+    btnStartImage.setAttribute("src", "./imagens/play_arrow.png");
+    isBtnActivity = false;
 }
 
+function  nextStates() {
+    switch(htmlContext.getAttribute("data-contexto")){
+        case "foco":
+            updateStates(shortBtn,"descanso-curto");
+            break;
+        case "descanso-curto":
+            updateStates(longBtn,"descanso-longo");
+            break;
+        case "descanso-longo":
+            updateStates(focusBtn,"foco");
+            break;
+        default:
+            break;
+    }
+}
