@@ -16,17 +16,22 @@ const songPlay = new Audio("/sons/play.wav");
 let isBtnActivity = false;
 let intervalId;
 musics.loop = true;
-let timeCurrentSeconds = 5
-
+let timeCurrentSeconds = 0;
+let timeCurrentMinutes = 25;
 
 
 const initcountTimer = () => {
     intervalId = setInterval(() => {
+        if (timeCurrentSeconds === 0) {
+            timeCurrentMinutes -= 1;
+            timeCurrentSeconds = 60
+        }
         timeCurrentSeconds -= 1;
         console.log(timeCurrentSeconds)
-        timeClass.innerHTML = `${timeCurrentSeconds}`
-        if (timeCurrentSeconds <= 0) {
+        timeClass.innerHTML = `${+timeCurrentMinutes}:${timeCurrentSeconds}`
+        if (timeCurrentMinutes <= 0 && timeCurrentSeconds <= 0) {
             clearInterval(intervalId);
+            nextStates();
             songBeep.play();
         }
     }, 1000)
@@ -35,7 +40,6 @@ const initcountTimer = () => {
 const pauseBtn = () => {
     btnStartImage.setAttribute("src", "./imagens/play_arrow.png");
     clearInterval(intervalId);
-    timeCurrentSeconds = 5
     isBtnActivity = !isBtnActivity;
 }
 
@@ -94,26 +98,43 @@ function updateStates(button, contexto) {
         }
     })
 
+    checkState(contexto);
+}
+
+
+function checkState(contexto) {
     switch (contexto) {
         case "foco":
             appTitle.innerHTML = `
             Hora de focar,<br>
             <strong class="app__title-strong">Mergulhe no que importa.</strong>
             `;
+            timeDefined(25);
             break;
         case "descanso-curto":
             appTitle.innerHTML = `
             Descanso curto,<br>
             <strong class="app__title-strong">Calma.</strong>
             `;
+            timeDefined(5);
             break;
         case "descanso-longo":
             appTitle.innerHTML = `
             Hora de voltar para superfice,<br>
             <strong class="app__title-strong">Respira.</strong>
             `;
+            timeDefined(15);
             break;
         default:
             break;
     }
 }
+
+function timeDefined(minutes) {
+    timeCurrentMinutes = minutes
+    timeCurrentSeconds = 0
+    timeClass.innerHTML = `${+timeCurrentMinutes}:${timeCurrentSeconds}0`
+    clearInterval(intervalId);
+    updateStateButtons();
+}
+
